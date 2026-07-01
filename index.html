@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaking Assessment - Colegio San Ignacio</title>
+
+    <style>
+        :root {
+            --primary-dark: #1a2a3a;
+            --oxford-blue: #002147;
+            --accent-blue: #3498db;
+            --record-red: #e74c3c;
+            --pause-orange: #f39c12;
+            --play-green: #2ecc71;
+            --bg-gray: #f4f7f6;
+            --white: #ffffff;
+            --text-main: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .oxford-box {
+            background-color: var(--oxford-blue);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 15px;
+            margin-top: 0;
+        }
+
+        .instruction-text {
+            display: block;
+            margin: 15px 0;
+            font-weight: 600;
+            background: #eef2f3;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .audio-preview-box {
+            background: #f8fbff;
+            border: 2px solid var(--accent-blue);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .iframe-container {
+            width: 100%;
+            max-width: 600px;
+            height: 360px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .recorder-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .timer {
+            font-family: monospace;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--oxford-blue);
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid var(--accent-blue);
+        }
+
+        .indicator {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .recording {
+            background: var(--record-red);
+            color: white;
+            animation: blink 1.5s infinite;
+        }
+
+        .paused {
+            background: var(--pause-orange);
+            color: white;
+        }
+
+        .stopped {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .ready {
+            background: var(--play-green);
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-record {
+            background: var(--record-red);
+            color: white;
+        }
+
+        .btn-pause {
+            background: var(--pause-orange);
+            color: white;
+        }
+
+        .btn-play {
+            background: var(--play-green);
+            color: white;
+        }
+
+        .btn-stop {
+            background: #34495e;
+            color: white;
+        }
+
+        .btn-download {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        button:disabled {
+            background: #bdc3c7 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #856404;
+            display: none;
+        }
+
+        .warning.show {
+            display: block;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="oxford-box">
+            <h3>COLEGIO SAN IGNACIO</h3>
+            <p><b>Speaking Task - 8th Grades</b></p>
+        </div>
+
+        <div class="student-info">
+            <div class="input-group">
+                <label for="studentClass">Class:</label>
+                <select id="studentClass" onchange="updateStudentList()">
+                    <option value="">-- Select Class --</option>
+                    <option value="8th Grade A">8th Grade A</option>
+                    <option value="8th Grade B">8th Grade B</option>
+                    <option value="8th Grade C">8th Grade C</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="studentName">Student Name:</label>
+                <select id="studentName" disabled>
+                    <option value="">-- Select Class First --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="warning" id="warningMsg">
+            Please select your class and name before downloading your recording.
+        </div>
+
+        <div class="section">
+            <h2>Teacher's Questions</h2>
+            <span class="instruction-text">
+                Listen carefully to the questions and then record your answers.
+            </span>
+            
+            <div class="audio-preview-box">
+                <div class="iframe-container">
+                    <!-- Embedded Google Drive preview -->
+                    <iframe src="https://drive.google.com/file/d/10Emh0c-ZPWK5ZoQtF8t1W7h_9heyCOse/preview" 
+                            width="640" 
+                            height="360" 
+                            frameborder="0" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
+                    Use the controls above to play, pause, or replay the questions.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Your Recording</h2>
+            <span class="instruction-text">
+                Record your answers for at least 1-2 minutes. You can pause and resume if needed.
+            </span>
+
+            <div class="recorder-box">
+                <div class="timer" id="timer">00:00</div>
+                <div class="indicator ready" id="status">Ready to Record</div>
+                
+                <!-- This is the key element for student playback -->
+                <audio id="studentPlayback" controls style="display: none;"></audio>
+                
+                <div class="controls">
+                    <button class="btn-record" id="recordBtn">RECORD</button>
+                    <button class="btn-pause" id="pauseBtn" disabled>PAUSE</button>
+                    <button class="btn-play" id="playBtn" disabled>PLAY</button>
+                    <button class="btn-stop" id="stopBtn" disabled>STOP</button>
+                    <button class="btn-download" id="downloadBtn" disabled>DOWNLOAD AUDIO</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Base de datos de estudiantes
+        const studentsDatabase = {
+            "8th Grade A": ["Barra Sanz Pía Del Pilar", "Carrizo Montecinos Tamara Isabel", "Chávez Hernández Joaquín Ignacio", "Cheung Abarzúa Chienyi Francisco", "Coloma Zúñiga Amara Eluney", "Díaz Castro Catalina Matilda", "Díaz Cortés Benjamín Alonso", "Espinosa Cornejo Amanda Catalina", "Espinoza García Cristóbal Guillermo", "González Narváez Emilia Fernanda", "González Valdebenito Tomás Felipe", "Guzmán Zamora Josefina Paz", "Henríquez Pozo Baltasar", "Hernández Callejas Salvador", "Jara Villanueva Florencia Sofía", "Jorquera Guzmán Camila Ignacia", "Linares Sirit Mathias Alejandro", "Lobos Arredondo Santiago Alonso", "Mahncke Monsalve Benjamín Alonso", "Mardones Villalón Martín Ignacio", "Moreno Tejias Santiago José", "Ovalle Navarrete Amanda Carolina", "Pereira Mora Josefa Melina", "Pino Carrasco Paula Elisa", "Reyes Bichara Santiago Said", "Rochd Garrido Karim Abdu", "Rojas Reyes Jonas Ignacio", "Rojas Soto Amanda Ignacia", "Santander Poblete Pascale Monserrat", "Sepúlveda Rebolledo Pía Catalina", "Squella Troncoso Ignacio Enrique", "Tobar González Tomás Pablo", "Torres Cena Javier Ignacio", "Ulloa Bravo Nicolás Alonso", "Vaccarella Henríquez Diego Antonio", "Vergara Fuenzalida Martina Belén", "Zamora Moreno Gaspar Emilio"],
+            "8th Grade B": ["Acuña Cifras Magdalena Paz", "Arteaga Córdova Maximiliano Andrés", "Brunet Cuellar Esteban Daniel", "Castro Cepeda Maximiliano", "Contreras Pozo Francisca Emilia", "Cordero Quiroz Isabella Ignacia", "Cukic Luengo Belén Antonia", "Del Campo Díaz Martín", "Díaz Navarrete Santiago Ignacio", "Dotte Ramírez Bruno Alonso", "Filippi Cvjetkovic Amparo", "Flores Martínez Dominga Paz", "Fuentes Vásquez Martina Ignacia", "Gutiérrez Urtulla Cristóbal Patricio", "Ibarra Barraza Ema Francisca", "Madariaga Cheix Agustín Matías", "Mella González Paz Isidora", "Molina Bardelli Isidora Agustina", "Morales Ibarra Adolfo Cristóbal", "Neculqueo Mura José Manuel", "Olivares Fincheira Isidora Fernanda", "Olivares Vidal Cristóbal Elías", "Orellana Hernández Borja Ignacio", "Osorio Cortez Benjamín Alejandro", "Osorno Arriagada Emma Magdalena", "Ovalle Navarrete Antonia Carolina", "Peredo Jansana Matías", "Pérez González Matías Ignacio", "Pérez Villalobos Camila Isidora", "Roa Ramírez José Tomás", "Ruiz Urzúa Emilia", "Salinas Bustamante Isidora Agustina", "Sánchez Ortiz Tomás Eduardo", "Silva Ortega Gabriel Enrique", "Trullén Robledo Pablo Renato", "Vargas Abarca Renato Gustavo", "Vines Zúñiga Francisco Antonio"],
+            "8th Grade C": ["Ahumada Villagra Agustín Pascual", "Arce Ramírez Isidora Alejandra", "Arellano Jorquera Amanda Jesús", "Badilla Díaz Valentina Anaís", "Baeza Ara Baltasar Ignacio", "Barrientos Casas-Cordero Rafael Emilio", "Basaure Mora Emilio Santiago", "Blondel Palza Cristóbal José", "Bruna Rodríguez Laura Victoria", "Cabezas Cárdenas Jose-Ignacio", "Díaz Bravo Antonio Eduardo", "Fernández Bustos Ignacia Francisca", "Goncalves Freire Ana Maria", "Granadino Inostroza Matías Felipe", "Gutiérrez Ferrando Marco Agustín", "Ite Hernández Bruno León", "Izaga Franco Martín Ignacio", "León Rosales Nicolás Alonso", "Madariaga Olave Amanda Victoria", "Mazuela Troncoso Alfredo Antonio", "Muñoz Olivos Franco André", "Muñoz Tobar Gabriel Ignacio", "Navarro Espinoza Pascal Rebeca", "Olivares Guajardo Agustina Antonella", "Osorio Bernal Diego Vicente", "Padilla Romero Trinidad Isabel", "Palma González Benjamín Diego", "Pérez Paredes Benjamín Alfonso", "Romero Gatica Gabriel Alejandro", "Ruiz Llano Javiera Ignacia", "Salazar Belmar Consthanza Elizabeth", "Sepúlveda de los Ríos Cybele Carolina", "Torres Ramírez Domingo", "Valenzuela Albornoz Matilde Ignacia", "Valiente Núñez Julián Agustín", "Videla Andia Mateo Francisco", "Zapata Arancibia Antonia Emilia"]
+        };
+
+        // Variables de grabación
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioBlob;
+        let audioUrl;
+        let timerInterval;
+        let seconds = 0;
+        let isPaused = false;
+        let pauseTime = 0;
+        let recordingAllowed = false;
+
+        // Elementos del DOM
+        const studentClass = document.getElementById('studentClass');
+        const studentName = document.getElementById('studentName');
+        const recordBtn = document.getElementById('recordBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const timerEl = document.getElementById('timer');
+        const statusEl = document.getElementById('status');
+        const studentPlayback = document.getElementById('studentPlayback');
+        const warningMsg = document.getElementById('warningMsg');
+        const teacherAudio = document.getElementById('teacherAudio');
+
+        // Actualizar lista de estudiantes según curso
+        function updateStudentList() {
+            const selectedClass = studentClass.value;
+            studentName.innerHTML = '<option value="">-- Select Student --</option>';
+            
+            if (selectedClass && studentsDatabase[selectedClass]) {
+                studentName.disabled = false;
+                studentsDatabase[selectedClass].forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student;
+                    option.textContent = student;
+                    studentName.appendChild(option);
+                });
+            } else {
+                studentName.disabled = true;
+                studentName.innerHTML = '<option value="">-- Select Class First --</option>';
+            }
+        }
+
+        // Formatear tiempo
+        function formatTime(secs) {
+            const minutes = Math.floor(secs / 60);
+            const seconds = secs % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Iniciar grabación
+        async function startRecording() {
+            try {
+                // Check if microphone is available
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recordingAllowed = true;
+                
+                // Initialize MediaRecorder
+                const mimeTypes = [
+                    'audio/mp3',
+                    'audio/mpeg',
+                    'audio/webm;codecs=opus',
+                    'audio/webm'
+                ];
+                
+                let selectedMimeType = '';
+                for (let type of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        selectedMimeType = type;
+                        break;
+                    }
+                }
+
+                mediaRecorder = new MediaRecorder(stream, selectedMimeType ? { mimeType: selectedMimeType } : undefined);
+                
+                audioChunks = [];
+                seconds = 0;
+                isPaused = false;
+                pauseTime = 0;
+                
+                // Handle data events
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                // Handle recording stop
+                mediaRecorder.onstop = () => {
+                    if (audioChunks.length > 0) {
+                        audioBlob = new Blob(audioChunks, { 
+                            type: selectedMimeType || 'audio/webm' 
+                        });
+                        audioUrl = URL.createObjectURL(audioBlob);
+                        
+                        // Update UI
+                        recordBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                        stopBtn.disabled = true;
+                        playBtn.disabled = false;
+                        downloadBtn.disabled = false;
+                        
+                        statusEl.textContent = 'Recording Ready';
+                        statusEl.className = 'indicator stopped';
+                        
+                        // Make playback element visible
+                        studentPlayback.style.display = 'block';
+                        
+                        // Clean up tracks
+                        stream.getTracks().forEach(track => track.stop());
+                    } else {
+                        alert('Recording was too short to be saved. Please record for at least 15 seconds.');
+                        resetRecording();
+                    }
+                };
+
+                // Handle pause/resume
+                mediaRecorder.onpause = () => {
+                    isPaused = true;
+                    pauseBtn.textContent = 'RESUME';
+                    statusEl.textContent = 'Paused';
+                    statusEl.className = 'indicator paused';
+                };
+
+                mediaRecorder.onresume = () => {
+                    isPaused = false;
+                    pauseBtn.textContent = 'PAUSE';
+                    statusEl.textContent = 'Recording...';
+                    statusEl.className = 'indicator recording';
+                };
+
+                // Start recording with 1-second intervals
+                mediaRecorder.start(1000);
+                
+                // Update UI
+                recordBtn.disabled = true;
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+                playBtn.disabled = true;
+                downloadBtn.disabled = true;
+                
+                statusEl.textContent = 'Recording...';
+                statusEl.className = 'indicator recording';
+                
+                // Start timer
+                timerInterval = setInterval(() => {
+                    if (!isPaused) {
+                        seconds++;
+                        timerEl.textContent = formatTime(seconds);
+                    }
+                }, 1000);
+                
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Please allow microphone access to record your answers.');
+                recordingAllowed = false;
+            }
+        }
+
+        // Pausar/Reanudar grabación
+        function togglePause() {
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+            
+            if (isPaused) {
+                // Reanudar
+                mediaRecorder.resume();
+                isPaused = false;
+                pauseBtn.textContent = 'PAUSE';
+                statusEl.textContent = 'Recording...';
+                statusEl.className = 'indicator recording';
+            } else {
+                // Pausar
+                mediaRecorder.pause();
+                isPaused = true;
+                pauseBtn.textContent = 'RESUME';
+                statusEl.textContent = 'Paused';
+                statusEl.className = 'indicator paused';
+            }
+        }
+
+        // Detener grabación
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                clearInterval(timerInterval);
+                timerEl.textContent = formatTime(seconds);
+            }
+        }
+
+        // Reset recording state
+        function resetRecording() {
+            audioChunks = [];
+            audioBlob = null;
+            audioUrl = null;
+            seconds = 0;
+            isPaused = false;
+            pauseTime = 0;
+            
+            // Reset UI
+            recordBtn.disabled = false;
+            pauseBtn.disabled = true;
+            stopBtn.disabled = true;
+            playBtn.disabled = true;
+            downloadBtn.disabled = true;
+            statusEl.textContent = 'Ready to Record';
+            statusEl.className = 'indicator ready';
+            timerEl.textContent = '00:00';
+            studentPlayback.style.display = 'none';
+        }
+
+        // Play the recorded audio
+        function playRecording() {
+            // Ensure we have a recording to play
+            if (!audioUrl || !audioBlob) {
+                alert('No recording available to play. Please record first.');
+                return;
+            }
+            
+            try {
+                // Clear any previous playback
+                studentPlayback.pause();
+                studentPlayback.currentTime = 0;
+                
+                // Wait for the audio to load before playing
+                studentPlayback.addEventListener('loadeddata', function() {
+                    studentPlayback.play();
+                    statusEl.textContent = 'Playing...';
+                    statusEl.className = 'indicator paused';
+                    
+                    // Add a small delay to ensure playback starts properly
+                    setTimeout(() => {
+                        if (studentPlayback.paused) {
+                            studentPlayback.play();
+                        }
+                    }, 500);
+                });
+                
+                // Set the source
+                studentPlayback.src = audioUrl;
+                
+                // If the audio is already loaded, play it immediately
+                if (studentPlayback.readyState >= studentPlayback.HAVE_CURRENT_DATA) {
+                    studentPlayback.play();
+                    statusEl.textContent = 'Playing...';
+                    statusEl.className = 'indicator paused';
+                }
+            } catch (err) {
+                console.error('Error playing recording:', err);
+                alert('Failed to play the recording. Please try again.');
+            }
+        }
+
+        // Download the recorded audio
+        function downloadAudio() {
+            // Validate class and name selection
+            if (!studentClass.value || !studentName.value) {
+                warningMsg.classList.add('show');
+                setTimeout(() => {
+                    warningMsg.classList.remove('show');
+                }, 3000);
+                return;
+            }
+            
+            if (!audioBlob) {
+                alert('Please record your answers first.');
+                return;
+            }
+
+            // Create filename
+            const className = studentClass.value.replace(/\s+/g, '_');
+            const studentNameValue = studentName.value.replace(/\s+/g, '_');
+            const extension = audioBlob.type.includes('mp3') || audioBlob.type.includes('mpeg') ? 'mp3' : 'webm';
+            const fileName = `${studentNameValue}_${className}_Speaking_3.${extension}`;
+            
+            // Download the audio
+            const link = document.createElement('a');
+            link.href = audioUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listeners
+        recordBtn.addEventListener('click', startRecording);
+        pauseBtn.addEventListener('click', togglePause);
+        stopBtn.addEventListener('click', stopRecording);
+        playBtn.addEventListener('click', playRecording);
+        downloadBtn.addEventListener('click', downloadAudio);
+
+        // When the page loads
+        window.addEventListener('load', function() {
+            // Initialize student list
+            updateStudentList();
+            
+            // Check if microphone is available
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    stream.getTracks().forEach(track => track.stop());
+                    recordingAllowed = true;
+                })
+                .catch(err => {
+                    console.error('Microphone access denied:', err);
+                    alert('Microphone access is required for recording. Please allow microphone access.');
+                    recordingAllowed = false;
+                });
+        });
+
+        // Handle window unload to prevent memory leaks
+        window.addEventListener('beforeunload', function() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        });
+    </script>
+
+</body>
+</html>
